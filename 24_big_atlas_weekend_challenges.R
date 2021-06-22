@@ -20,6 +20,7 @@ baw <- read.csv(here("data", "ebird", "2_standardized",
                        paste0("big-atlas-weekend_", year, ".csv")))
 
 # pre-event data from eBird
+## will have project code, block code, diurnal effort
 prebaw <- read.csv(here("data", "ebird", "2_standardized",
                           paste0("pre-big-atlas-weekend_", year, ".csv")))
 
@@ -154,17 +155,6 @@ baw <- baw %>%
   mutate(nocturnal = if_else(observation_datetime <= ebird_dawn | 
                                observation_datetime >= ebird_dusk, 
                              "nocturnal", "diurnal"))
-
-# change the checklist's designation to diurnal if it extends past dawn
-notna <-which(!is.na(baw$duration_minutes))
-indx <- which(baw$nocturnal[notna] == "nocturnal" &
-                ms(paste(baw$duration_minutes[notna], 0)) > 
-                abs(as_datetime(baw$ebird_dawn[notna]) -
-                      as_datetime(baw$observation_datetime[notna])))
-
-bba3[indx, "nocturnal"] <- "diurnal"
-
-rm(indx, notna)
 
 # State Challenges ------------------------------------------------------------
 
