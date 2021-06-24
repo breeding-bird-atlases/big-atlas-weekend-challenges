@@ -338,6 +338,22 @@ state_winner <- baw_atlas_state[! duplicated(baw_atlas_state$sub_id), ] %>%
   mutate(contest = "Atlas Checklists") %>%
   bind_rows(state_winner)
 
+# o Calculate Winner
+## First = 23 points, second = 13, third = 7, fourth = 0
+state_winner <- state_winner %>%
+  arrange(contest, desc(challenge_value)) %>%
+  group_by(contest) %>%
+  mutate(ranking = rank(-challenge_value, ties.method = "min")) %>%
+  mutate(points = case_when(
+    ranking == 1 ~ 23,
+    ranking == 2 ~ 13,
+    ranking == 3 ~ 7,
+    TRUE ~ 0
+  )) %>%
+  group_by(proj_id) %>%
+  summarize(winner = max(sum(points))) %>%
+  arrange(desc(winner))
+
 write.csv(state_winner, here("output", paste0("big-atlas-weekend_state-", 
                                               "winner_", year, ".csv")),
           row.names = FALSE)
