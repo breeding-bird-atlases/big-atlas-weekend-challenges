@@ -100,8 +100,11 @@ baw <- full_join(baw, baw_checklists) %>%
 # Find new atlasers
 atlasers$first_list <- as_datetime(atlasers$first_list, 
                                    format = "%m/%d/%Y %H:%M")
+atlasers$latest_list <- as_datetime(atlasers$latest_list,
+                                    format = "%m/%d/%Y %H:%M")
 new_atlasers <- filter(atlasers, 
-                       first_list > as_datetime("2021-06-25 17:59:59"))
+                       first_list > as_datetime("2021-06-25 17:59:59") &
+                         latest_list < as_datetime("2021-06-28 0:00:00"))
 
 # State Challenges ------------------------------------------------------------
 
@@ -269,7 +272,7 @@ top_ten <- baw_atlas %>%
 
 # o First-time Checklists -----------------------------------------------------
 ## Any atlaser who contributes their first checklist
-baw_first <- anti_join(baw, new_atlasers, by = c("observer_id" = "user_id"))
+baw_first <- baw %>% filter(user_id %in% new_atlasers$user_id)
 
 winners <- baw_first %>%
   group_by(proj_id) %>%
