@@ -98,10 +98,10 @@ baw <- full_join(baw, baw_checklists) %>%
   distinct()
 
 # Find new atlasers
-atlasers$first_submitted_date <- as_datetime(atlasers$first_submitted_date)
+atlasers$first_list <- as_datetime(atlasers$first_list, 
+                                   format = "%m/%d/%Y %H:%M")
 new_atlasers <- filter(atlasers, 
-                       first_submitted_date > 
-                         as_datetime("2021-06-25 17:59:59"))
+                       first_list > as_datetime("2021-06-25 17:59:59"))
 
 # State Challenges ------------------------------------------------------------
 
